@@ -1,13 +1,14 @@
 import java.util.Date;
 
 public class Autor {
+    private static int contadorId = 1;
     private int id;
-    private String name;
+    private String nome;
     private Date dataNascimento;
 
-    public Autor(int id, String name, Date dataNascimento) {
-        this.id = id;
-        this.name = name;
+    public Autor(String name, Date dataNascimento) {
+        this.id = contadorId++;
+        this.nome = name;
         this.dataNascimento = dataNascimento;
     }
 
@@ -19,12 +20,12 @@ public class Autor {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public Date getDataNascimento() {
@@ -39,7 +40,7 @@ public class Autor {
     public String toString() {
         return "Autor{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + nome + '\'' +
                 ", dataNascimento=" + dataNascimento +
                 '}';
     }
