@@ -1,6 +1,7 @@
-import java.util.Date;
+import java.util.*;
 
 public class Livro {
+    private static int contadorId = 1;
     private int id;
     private String titulo;
     private Autor autor;
@@ -8,12 +9,33 @@ public class Livro {
     private Date dataDeCadastro;
     private Date dataDeAtualizacao;
 
-    public Livro(int id, String titulo, Autor autor) {
-        this.id = id;
+    private Map<Livro, List<Emprestimo>> historicoEmprestimos= new HashMap<>();
+
+    public Livro(String titulo, Autor autor) {
+        this.id = contadorId++;
         this.titulo = titulo;
         this.autor = autor;
         this.dataDeCadastro = new Date();
         this.dataDeAtualizacao = new Date();
+    }
+
+    public void adicionarEmprestimo(Emprestimo emprestimo) {
+        historicoEmprestimos.computeIfAbsent(this, k -> new ArrayList<>()).add(emprestimo);
+    }
+
+    public List<Emprestimo> buscarEmprestimos() {
+        return historicoEmprestimos.computeIfAbsent(this, k -> new ArrayList<>());
+    }
+    public void exibirEmprestimos() {
+        List<Emprestimo> emprestimos = buscarEmprestimos();
+
+        if (emprestimos.isEmpty()) {
+            System.out.println("Nenhum empréstimo encontrado desse livro");
+        } else {
+            for (Emprestimo emprestimo : emprestimos) {
+                System.out.println(emprestimo);
+            }
+        }
     }
 
     public int getId() {
@@ -31,10 +53,6 @@ public class Livro {
 
     public Autor getAutor() {
         return autor;
-    }
-
-    public void setAutor(Autor autor) {
-        this.autor = autor;
     }
 
     public boolean isDisponivel() {
