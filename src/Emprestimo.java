@@ -50,7 +50,7 @@ public class Emprestimo {
                 "id=" + id + ",\n" +
                 "dataDoEmprestimo=" + dataDoEmprestimo + ",\n" +
                 "dataDaDevolucao=" + dataDaDevolucao + ",\n" +
-                "nomeCliente='" + cliente.getName() + "',\n" +
+                "nomeCliente='" + cliente.getNome() + "',\n" +
                 "livro=" + livro.getTitulo() + ",\n" +
                 "ativo=" + ativo + "\n" +
                 '}';
