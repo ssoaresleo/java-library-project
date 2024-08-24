@@ -6,14 +6,14 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Autor autor1 = new Autor(1, "João Guilherme", new Date());
-        Autor autor2 = new Autor(2, "Maria rocha", new Date());
-        Autor autor3 = new Autor(3, "Pedro Martins", new Date());
+        Autor autor1 = new Autor("João Guilherme", new Date());
+        Autor autor2 = new Autor("Maria rocha", new Date());
+        Autor autor3 = new Autor("Pedro Martins", new Date());
 
 
-        Livro livro1 = new Livro(1, "Clean Code", autor1);
-        Livro livro2 = new Livro(2, "Entendendo o Java", autor2);
-        Livro livro3 = new Livro(3, "Escopo de funções", autor3);
+        Livro livro1 = new Livro("Clean Code", autor1);
+        Livro livro2 = new Livro("Entendendo o Java", autor2);
+        Livro livro3 = new Livro("Escopo de funções", autor3);
 
         Cliente cliente1 = new Cliente("Leonardo Henrique", new Date(), "ssoares.leo@gmail.com");
         Cliente cliente2 = new Cliente("Lucas Winicius", new Date(), "winicius.lucas@gmail.com");
@@ -21,190 +21,202 @@ public class Main {
         Biblioteca biblioteca = new Biblioteca();
         Scanner scanner = new Scanner(System.in);
 
-        biblioteca.setAutores(autor1);
-        biblioteca.setAutores(autor2);
-        biblioteca.setAutores(autor3);
+        biblioteca.cadastrarAutores(autor1);
+        biblioteca.cadastrarAutores(autor2);
+        biblioteca.cadastrarAutores(autor3);
 
-        biblioteca.setLivros(livro1);
-        biblioteca.setLivros(livro2);
-        biblioteca.setLivros(livro3);
+        biblioteca.cadastrarLivro(livro1);
+        biblioteca.cadastrarLivro(livro2);
+        biblioteca.cadastrarLivro(livro3);
 
-        biblioteca.setClientes(cliente1);
-        biblioteca.setClientes(cliente2);
-
-        biblioteca.emprestar(livro1, "Leonardo Henrique");
+        biblioteca.cadastrarCliente(cliente1);
+        biblioteca.cadastrarCliente(cliente2);
 
         while (true) {
             System.out.println("Bem-vindo(a) Ao Sistema de Livraria");
             System.out.println("Gostaria de ver os livros disponíveis hoje? (sim/não/sair)");
 
             String resposta = scanner.nextLine();
-            resposta = resposta.trim().toLowerCase();
 
-            if(resposta.equals("sim")) {
-                List<Livro> livrosDisponiveis = biblioteca.buscarLivrosDisponiveis();
+            // Listar livros
+            if(resposta.equalsIgnoreCase("sim")) {
+               try {
+                   System.out.println("Esses são os livros disponiveis para emprestimos");
+                   biblioteca.buscarLivrosDisponiveis();
 
-                if(livrosDisponiveis.isEmpty()) {
-                    System.out.println("Não foi possivél encontrar livros...");
-                } else {
-                    for (Livro livro : livrosDisponiveis) {
-                        System.out.println("Livro: " + livro.getTitulo() + ", por: " + livro.getAutor().getName() + ", cod: " + livro.getId());
-                    }
-                    System.out.println("Deseja escolher algum para ler? (sim/nao)");
+               } catch (LivrosNaoEncontrados e) {
+                   System.out.println(e.getMessage());
+                   continue;
+               }
 
-                    String desejaLer = scanner.nextLine().trim().toLowerCase();
+                System.out.println("Deseja escolher algum desses para ler? (sim/nao)");
+                String desejaLer = scanner.nextLine();
 
-                    if(desejaLer.equals("sim")) {
-                        System.out.println("Insira o código do livro que deseja levar");
+                // Novo emprestimo
+                if(desejaLer.equalsIgnoreCase("sim")) {
+                    System.out.println("Insira o código do livro que deseja levar");
 
-                        int codLivro = scanner.nextInt();
-                        // Limpa o buffer
-                        scanner.nextLine();
+                    int codigoDoLivro = scanner.nextInt();
+                    scanner.nextLine();
 
-                        Livro livro = biblioteca.buscaLivroPorId(codLivro);
+                    System.out.println("Boa escolha! Para continuar, Insira seu nome:");
+                    String nomeCliente = scanner.nextLine().trim();
 
-                        if(livro == null || !livro.isDisponivel()) {
-                            System.out.println("Não foi possivél encontrar este livro, ou não está disponível no momento.");
-                        } else {
-                            System.out.println("Boa escolha! " + livro.getTitulo() + " Foi escolhido por você!");
-                            System.out.println("Qual seu nome?");
+                    Cliente cliente = biblioteca.buscarClientePorNome(nomeCliente);
 
-                            String nomePessoa = scanner.nextLine().trim();
+                   try {
+                       Livro livro = biblioteca.buscaLivroPorId(codigoDoLivro);
+                       biblioteca.emprestarLivro(livro, cliente);
 
-                            Cliente clienteExiste = biblioteca.buscarClientePorNome(nomePessoa);
-
-                            if(clienteExiste == null) {
-                                System.out.println("Hmm vi aqui que você não tem um cadastro na nossa biblioteca, caso queira se registrar volte novamente e escolha a opção de cadastro!");
-                            } else {
-                                biblioteca.emprestar(livro, nomePessoa);
-
-                                System.out.println("O Livro foi emprestado com sucesso para: " + nomePessoa);
-                            }
-                        }
-                    }
+                       System.out.println("Livro: " + livro.getTitulo() + ", cod: " + livro.getId() + " foi emprestado para: " + nomeCliente);
+                   } catch (LivroException e) {
+                       System.out.println(e.getMessage());
+                   }
                 }
+
             } else if (resposta.equals("nao") || resposta.equals("não")) {
-                System.out.println("Ok, o que deseja hoje?");
-                System.out.println("(clientes/cadastro/emprestimos/buscar livros)");
+                // inicia um loop(menu) com outro contexto
+               while (true) {
+                   System.out.println("Sistema de Livraria");
+                   System.out.println("(clientes/cadastro/emprestimos/livros/autores/voltar)");
 
-                String escolha = scanner.nextLine();
-                escolha = escolha.toLowerCase().trim();
+                   String escolha = scanner.nextLine();
 
-                if(escolha.equals("emprestimos")) {
-                    System.out.println("Como deseja listar os emprestimos? (livro/cliente)");
+                   if(escolha.equalsIgnoreCase("autores")) {
+                       System.out.println("Lista de autores: ");
+                       biblioteca.buscarAutores();
 
-                    String tipoDaBusca = scanner.nextLine();
+                   }
+                   //Buscar emprestimos por cliente ou livro expecifico
+                   else if(escolha.equalsIgnoreCase("emprestimos")) {
+                       System.out.println("Como deseja listar os emprestimos? (livro/cliente)");
+                       String buscarEmprestimosPorTipo = scanner.nextLine();
 
+                       if(buscarEmprestimosPorTipo.equals("cliente")) {
+                           System.out.println("Digite o nome do cliente: ");
 
-                    if(tipoDaBusca.equals("cliente")) {
-                        System.out.println("Digite o nome do cliente: ");
+                           String nomeCliente = scanner.nextLine();
 
-                        String nomeCliente = scanner.nextLine();
+                           Cliente cliente = biblioteca.buscarClientePorNome(nomeCliente);
 
-                        Cliente cliente = biblioteca.buscarClientePorNome(nomeCliente);
+                           cliente.exibirEmprestimos();
+                       } else if(buscarEmprestimosPorTipo.equals("livro")) {
+                           System.out.println("Digite o titulo do livro: ");
 
-                        if(cliente == null) {
-                            System.out.println("Não foi possivél encontrar esse livro.");
+                           String tituloLivro = scanner.nextLine();
 
-                            return;
-                        }
+                           Livro livro = biblioteca.buscarLivroPorTitulo(tituloLivro);
 
-                        List<Emprestimo> emprestimos = biblioteca.getHistoricoEmprestimosPorCliente(cliente);
+                           livro.exibirEmprestimos();
+                       }
 
-                        if(emprestimos.isEmpty()) {
-                            System.out.println("Este cliente não tem nenhum emprestimo");
-                        } else {
-                            System.out.println(emprestimos);
-                        }
-                    }
+                   } else if(escolha.equals("livros")) {
+                       System.out.println("Como deseja listar os livros? (todos/nome)");
+                       String buscarLivrosPor = scanner.nextLine();
 
-                    if(tipoDaBusca.equals("livro")) {
-                        System.out.println("Digite o titulo do livro: ");
+                       if(buscarLivrosPor.equals("todos")) {
+                           biblioteca.buscarLivros();
 
-                        String tituloLivro = scanner.nextLine();
+                       } else if(buscarLivrosPor.equals("nome")) {
+                           System.out.println("Digite o titulo:");
+                           String tituloLivro = scanner.nextLine();
 
-                        Livro livro = biblioteca.buscarLivroPorTitulo(tituloLivro);
-                        if(livro == null) {
-                            System.out.println("Não foi possivél encontrar esse livro.");
+                           System.out.println(biblioteca.buscarLivroPorTitulo(tituloLivro));
+                       }
+                   } else if(escolha.equals("clientes")) {
+                       System.out.println("Lista de clientes: ");
+                       biblioteca.buscarClientes();
 
-                            return;
-                        }
+                   } else if(escolha.equals("cadastro")) {
+                       System.out.println("Qual tipo de cadastro? (livro/cliente/autor)");
+                       String tipoCadastro = scanner.nextLine();
 
-                        List<Emprestimo> emprestimos = biblioteca.getHistoricoEmprestimosPorLivro(livro);
+                       // Inicia um loop cadastro de livro
+                       if(tipoCadastro.equals("livro")) {
+                           while (true) {
+                               System.out.println("Digite o titulo do livro:");
+                               String titulo = scanner.nextLine();
 
-                        if(emprestimos.isEmpty()) {
-                            System.out.println("Este livro não tem nenhum emprestimo");
-                        } else {
-                            System.out.println(emprestimos);
-                        }
-                    }
+                               System.out.println("Nome do autor:");
+                               String nomeDoAutor = scanner.nextLine();
 
-                }
+                               try {
+                                   Autor autorDoLivro = biblioteca.buscarAutorPorNome(nomeDoAutor);
 
-                if(escolha.equals("buscar livros") || escolha.equals("buscar")) {
-                    System.out.println("Como deseja listar os livros? (todos/nome)");
+                                   Livro novoLivro = new Livro(titulo, autorDoLivro);
+                                   biblioteca.cadastrarLivro(novoLivro);
 
-                    String tipoDaBusca = scanner.nextLine();
+                                   System.out.println("Livro cadastrado com sucesso!");
 
-                    List<Livro> livros = biblioteca.getLivros();
-                    if(tipoDaBusca.equals("todos")) {
+                                   break;
+                               } catch (AutorNaoEncontradoException e) {
+                                   System.out.println(e.getMessage());
+                                   System.out.println("(Certifique-se que esse autor está cadastrado ou que tenha inserido o nome corretamente)");
 
+                                   System.out.println("Lista dos autores cadastrados: ");
+                                   biblioteca.buscarAutores();
 
-                        for (Livro livro : livros) {
-                            System.out.println("Livro: " + livro.getTitulo() + ", por: " + livro.getAutor().getName() + ", cod: " + livro.getId());
-                        }
-                    }
+                                   System.out.println("Deseja tentar novamente? (sim/nao)");
 
-                    if(tipoDaBusca.equals("nome")) {
-                        System.out.println("Digite o titulo:");
-                        String tituloLivro = scanner.nextLine();
+                                   String desejaContinuarCadastro = scanner.nextLine();
 
-                        Livro livroEncontrado = livros.stream().filter(l -> l.getTitulo().contains(tituloLivro)).findFirst().orElse(null);
+                                   if(!desejaContinuarCadastro.equalsIgnoreCase("sim")) {
+                                       System.out.println("Cancelando cadastro de autor...");
+                                       break;
+                                   }
+                               }
+                           }
+                       }
 
-                        if(livroEncontrado != null) {
-                            System.out.println("Livro: " + livroEncontrado.getTitulo() + ", por: " + livroEncontrado.getAutor().getName() + ", cod: " + livroEncontrado.getId());
-                        } else {
-                            System.out.println("Não foi possivél encontrar esse livro.");
-                        }
-                    }
-                }
+                       if(tipoCadastro.equals("cliente")) {
+                           System.out.println("Para continuar insira seu nome: ");
+                           String name = scanner.nextLine();
 
-                if(escolha.equals("clientes")) {
-                    System.out.println("Lista de clientes: ");
+                           System.out.println("Insira sua data de nascimento: (12/04/2000)");
+                           String dataDeNascimento = scanner.nextLine();
 
-                    List<Cliente> clientes = biblioteca.getClients();
+                           System.out.println("Insira seu e-mail");
+                           String email = scanner.nextLine();
 
+                           SimpleDateFormat dataFormato = new SimpleDateFormat("dd/MM/yyyy");
 
-                    for(Cliente cliente : clientes) {
-                        System.out.println("nome: " + cliente.getName() + " email:" + " " + cliente.getEmail());
-                    }
-                }
+                           try {
+                               Date dataFormatada = dataFormato.parse(dataDeNascimento);
+                               Cliente novoCliente = new Cliente(name, dataFormatada, email);
 
-                if(escolha.equals("cadastro")) {
-                    System.out.println("Para continuar insira seu nome: ");
-                    String name = scanner.nextLine();
+                               biblioteca.cadastrarCliente(novoCliente);
 
-                    System.out.println("Insira sua data de nascimento: (12/04/2000)");
-                    String dataDeNascimento = scanner.nextLine();
+                               System.out.println("Seja bem vindo " + novoCliente.getNome() + " Começe já escolhendo um livro!");
 
-                    System.out.println("Insira seu e-mail");
-                    String email = scanner.nextLine();
+                           }catch (ParseException e) {
+                               e.printStackTrace();
+                           }
+                       } else if (tipoCadastro.equals("autor")) {
+                           System.out.println("Digite o nome do autor:");
+                           String nome = scanner.nextLine();
 
-                    SimpleDateFormat dataFormato = new SimpleDateFormat("dd/MM/yyyy");
+                           System.out.println("Digite a data de nascimento: (12/04/2000)");
+                           String dataDeNascimento = scanner.nextLine();
 
-                    try {
-                        Date dataFormatada = dataFormato.parse(dataDeNascimento);
-                        Cliente novoCliente = new Cliente(name, dataFormatada, email);
+                           SimpleDateFormat dataFormato = new SimpleDateFormat("dd/MM/yyyy");
 
-                        biblioteca.setClientes(novoCliente);
+                           try {
+                               Date dataFormatada = dataFormato.parse(dataDeNascimento);
+                               Autor novoAutor = new Autor(nome, dataFormatada);
 
-                        System.out.println("Seja bem vindo " + novoCliente.getName() + " Começe já escolhendo um livro!");
+                               biblioteca.cadastrarAutores(novoAutor);
 
-                    }catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-
+                               System.out.println("O Autor " + novoAutor.getNome() + " Foi cadastrado com sucesso!");
+                           }catch (ParseException e) {
+                               e.printStackTrace();
+                           }
+                       }
+                   }
+                   // Sair para o inicio
+                   if(escolha.equalsIgnoreCase("voltar")) {
+                       break;
+                   }
+               }
             } else if (resposta.equals("sair")) {
                 System.out.println("Obrigado por utilizar nosso sitema de livraria! Volte sempre :D");
 
