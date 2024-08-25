@@ -1,3 +1,5 @@
+package com.biblioteca.projeto.autor;
+
 import java.util.Date;
 
 public class Autor {

@@ -1,3 +1,8 @@
+package com.biblioteca.projeto.livro;
+
+import com.biblioteca.projeto.autor.Autor;
+import com.biblioteca.projeto.emprestimo.Emprestimo;
+
 import java.util.*;
 
 public class Livro {

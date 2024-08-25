@@ -1,3 +1,14 @@
+package com.biblioteca.projeto.biblioteca;
+
+import com.biblioteca.projeto.autor.Autor;
+import com.biblioteca.projeto.autor.AutorNaoEncontradoException;
+import com.biblioteca.projeto.cliente.Cliente;
+import com.biblioteca.projeto.cliente.ClienteNaoEncontado;
+import com.biblioteca.projeto.emprestimo.Emprestimo;
+import com.biblioteca.projeto.livro.Livro;
+import com.biblioteca.projeto.livro.LivroException;
+import com.biblioteca.projeto.livro.LivrosNaoEncontrados;
+
 import java.util.*;
 
 public class Biblioteca {

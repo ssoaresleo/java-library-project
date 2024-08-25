@@ -1,36 +1,21 @@
+package com.biblioteca.projeto.biblioteca;
+
+import com.biblioteca.projeto.autor.Autor;
+import com.biblioteca.projeto.autor.AutorNaoEncontradoException;
+import com.biblioteca.projeto.cliente.Cliente;
+import com.biblioteca.projeto.livro.Livro;
+import com.biblioteca.projeto.livro.LivroException;
+import com.biblioteca.projeto.livro.LivrosNaoEncontrados;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Scanner;
 
-public class Main {
+public class Sistema {
     public static void main(String[] args) {
-        Autor autor1 = new Autor("João Guilherme", new Date());
-        Autor autor2 = new Autor("Maria rocha", new Date());
-        Autor autor3 = new Autor("Pedro Martins", new Date());
-
-
-        Livro livro1 = new Livro("Clean Code", autor1);
-        Livro livro2 = new Livro("Entendendo o Java", autor2);
-        Livro livro3 = new Livro("Escopo de funções", autor3);
-
-        Cliente cliente1 = new Cliente("Leonardo Henrique", new Date(), "ssoares.leo@gmail.com");
-        Cliente cliente2 = new Cliente("Lucas Winicius", new Date(), "winicius.lucas@gmail.com");
-
         Biblioteca biblioteca = new Biblioteca();
         Scanner scanner = new Scanner(System.in);
-
-        biblioteca.cadastrarAutores(autor1);
-        biblioteca.cadastrarAutores(autor2);
-        biblioteca.cadastrarAutores(autor3);
-
-        biblioteca.cadastrarLivro(livro1);
-        biblioteca.cadastrarLivro(livro2);
-        biblioteca.cadastrarLivro(livro3);
-
-        biblioteca.cadastrarCliente(cliente1);
-        biblioteca.cadastrarCliente(cliente2);
 
         while (true) {
             System.out.println("Bem-vindo(a) Ao Sistema de Livraria");

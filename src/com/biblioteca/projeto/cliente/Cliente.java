@@ -1,3 +1,7 @@
+package com.biblioteca.projeto.cliente;
+
+import com.biblioteca.projeto.emprestimo.Emprestimo;
+
 import java.util.*;
 
 public class Cliente {

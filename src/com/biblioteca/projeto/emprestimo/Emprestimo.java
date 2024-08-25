@@ -1,3 +1,7 @@
+package com.biblioteca.projeto.emprestimo;
+import com.biblioteca.projeto.cliente.Cliente;
+import com.biblioteca.projeto.livro.Livro;
+
 import java.util.Date;
 
 public class Emprestimo {
